@@ -1,0 +1,5 @@
+{
+  "name": "Maldives Rainfall Tracker",
+  "description": "A modern dashboard to track rainfall and precipitation patterns in the Maldives using Open-Meteo data.",
+  "requestFramePermissions": []
+}
