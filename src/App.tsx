@@ -5,8 +5,6 @@ import {
   Calendar, 
   MapPin, 
   ArrowUpRight, 
-  ArrowDownRight,
-  Info,
   RefreshCw,
   Waves,
   Clock,
@@ -22,7 +20,7 @@ import {
   Tooltip, 
   ResponsiveContainer
 } from 'recharts';
-import { format, parseISO, addSeconds } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
 import { WeatherResponse, City } from './types';
 import { cn } from './utils';
@@ -38,7 +36,6 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
-  // Update current time every second
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -48,18 +45,15 @@ export default function App() {
     try {
       setRefreshing(true);
       setError(null);
-      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      // DIRECT CALL to Open-Meteo to prevent 404 errors on static hosts
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&daily=precipitation_sum&timezone=auto&past_days=7&forecast_days=7`;
       
       const response = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!response.ok) throw new Error(`Weather service error: ${response.status}`);
-      
       const result = await response.json();
       if (!result.daily) throw new Error('Invalid data format received');
 
@@ -76,7 +70,6 @@ export default function App() {
     fetchData(selectedCity);
   }, [selectedCity]);
 
-  // Filter cities based on search input
   const filteredCities = useMemo(() => {
     return MALDIVES_CITIES.filter(c => 
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -102,17 +95,12 @@ export default function App() {
 
   const stats = useMemo(() => {
     if (!chartData.length) return null;
-    
-    // Dynamically calculate "Today" instead of hardcoding Feb 26
     const todayStr = format(cityLocalTime, 'yyyy-MM-dd');
     let todayIndex = chartData.findIndex(d => d.date === todayStr);
-    
-    // Fallback if the date transition hasn't happened in the API yet
-    if (todayIndex === -1) todayIndex = 7; // The 8th element is usually 'today' in a 7-day past request
+    if (todayIndex === -1) todayIndex = 7;
 
     const todayData = chartData[todayIndex];
     const weeklyData = chartData.slice(Math.max(0, todayIndex - 6), todayIndex + 1);
-
     const total = weeklyData.reduce((acc, curr) => acc + curr.amount, 0);
     const max = Math.max(...chartData.map(d => d.amount));
     const yesterday = todayIndex > 0 ? chartData[todayIndex - 1].amount : 0;
@@ -123,7 +111,6 @@ export default function App() {
       max, 
       today: todayData?.amount ?? 0, 
       trend: (todayData?.amount ?? 0) >= yesterday ? 'up' : 'down',
-      todayIndex,
       todayStr
     };
   }, [chartData, cityLocalTime]);
@@ -144,7 +131,6 @@ export default function App() {
             <div className="w-12 h-12 bg-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-200">
               <Waves className="text-white w-7 h-7" />
             </div>
-            
             <div className="relative">
               <button onClick={() => setIsCityMenuOpen(!isCityMenuOpen)} className="flex flex-col items-start group">
                 <div className="flex items-center gap-1.5">
@@ -156,7 +142,6 @@ export default function App() {
                   <span>{selectedCity.atoll} Atoll</span>
                 </div>
               </button>
-
               <AnimatePresence>
                 {isCityMenuOpen && (
                   <>
@@ -191,7 +176,6 @@ export default function App() {
               </AnimatePresence>
             </div>
           </div>
-
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex flex-col items-end">
               <div className="flex items-center gap-2 text-slate-900 font-bold">
@@ -206,7 +190,6 @@ export default function App() {
           </div>
         </div>
       </header>
-
       <main className="max-w-7xl mx-auto px-4 py-8">
         {error ? (
           <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
@@ -221,7 +204,6 @@ export default function App() {
               <StatCard title="Daily Average" value={`${stats?.avg?.toFixed(1) ?? '0.0'} mm`} icon={<Calendar />} color="indigo" />
               <StatCard title="Peak Rainfall" value={`${stats?.max?.toFixed(1) ?? '0.0'} mm`} icon={<ArrowUpRight />} color="slate" />
             </div>
-
             <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
               <h2 className="text-xl font-bold mb-8">Rainfall Trends</h2>
               <div className="h-[350px] w-full">
@@ -241,7 +223,6 @@ export default function App() {
                 </ResponsiveContainer>
               </div>
             </div>
-
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
               <h2 className="text-xl font-bold mb-6">Daily Breakdown</h2>
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
