@@ -24,9 +24,3 @@ export interface WeatherResponse {
   };
   daily: DailyData;
 }
-
-export interface RainfallPoint {
-  date: string;
-  amount: number;
-  formattedDate: string;
-}
