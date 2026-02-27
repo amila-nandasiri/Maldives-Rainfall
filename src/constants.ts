@@ -11,4 +11,5 @@ export const MALDIVES_CITIES: City[] = [
   { name: "Dhidhdhoo", lat: 6.8874, lon: 73.1140, atoll: "Haa Alif" },
   { name: "Eydhafushi", lat: 5.1037, lon: 73.0708, atoll: "Baa" },
   { name: "Villingili", lat: 0.7542, lon: 73.4347, atoll: "Gaafu Alif" },
+  { name: "Maafushi", lat: 3.9443, lon: 73.4893, atoll: "Kaafu" },
 ];
