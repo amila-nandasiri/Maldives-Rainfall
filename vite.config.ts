@@ -1,16 +1,16 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/Maldives-Rainfall/',
+  // Replace 'maldives-rainfall' with your actual repository name
+  base: '/maldives-rainfall/', 
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // Ensure the base path is correct for GitHub Pages
-  // base: '/your-repo-name/', 
 });
